@@ -39,8 +39,6 @@ import retrofit2.converter.gson.GsonConverterFactory;
 public class TRNReplay {
 
     public static MultipartBody.Part fromFile(File file, Consumer<Integer> percentageConsumer) {
-        //return MultipartBody.Part.createFormData("file", "temp.replay",
-        //        RequestBody.create(MediaType.parse("multipart/form-data"), file));
         return MultipartBody.Part.createFormData("file", "temp.replay",
                 new ProgressRequestBody(file, "multipart/form-data", percentageConsumer));
     }
@@ -62,24 +60,6 @@ public class TRNReplay {
         final ReplayService replayService = retrofit.create(ReplayService.class);
         System.out.println("Creating job...");
         final long timeStart = System.currentTimeMillis();
-        /*
-        replayService.createJob(fromFile(replay)).enqueue(new Callback<DataResponse<JobData>>() {
-                    public void onResponse(Call<DataResponse<JobData>> call,
-                                           Response<DataResponse<JobData>> responseResponse) {
-                        try {
-
-                        } catch (Exception e) {
-                            e.printStackTrace();
-                            completed[0] = true;
-                            data[0] = null;
-                        }
-                    }
-
-                    public void onFailure(Call<DataResponse<JobData>> call, Throwable throwable) {
-                        completed[0] = true;
-                        data[0] = null;
-                    }
-                });*/
         Response<DataResponse<JobData>> responseResponse =
                 replayService.createJob(fromFile(replay, percentageConsumer)).execute();
         String jobId =
@@ -108,7 +88,6 @@ public class TRNReplay {
         }
         DataResponse<ReplayData> response =
                 replayService.getReplayData(result.result.replayId).execute().body();
-        //System.out.println(new Gson().toJson(response));
         return response.data;
     }
 
