@@ -1,6 +1,6 @@
 package com.fortnitetracker.replays;
 
-import okhttp3.RequestBody;
+import okhttp3.MultipartBody;
 import retrofit2.Call;
 import retrofit2.http.GET;
 import retrofit2.http.Multipart;
@@ -18,7 +18,7 @@ public interface ReplayService {
      */
     @POST("replays/upload")
     @Multipart
-    Call<DataResponse<JobData>> createJob(@Part("replay") RequestBody replay);
+    Call<DataResponse<JobData>> createJob(@Part MultipartBody.Part replay);
 
     /**
      * Looks up status of a job, returns result of the job; if finished.
