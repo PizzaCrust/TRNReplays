@@ -14,6 +14,7 @@ import java.nio.Buffer;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
+import java.util.function.Consumer;
 
 import javafx.scene.shape.Path;
 import okhttp3.Interceptor;
@@ -37,14 +38,14 @@ import retrofit2.converter.gson.GsonConverterFactory;
  */
 public class TRNReplay {
 
-    public static MultipartBody.Part fromFile(File file) {
+    public static MultipartBody.Part fromFile(File file, Consumer<Integer> percentageConsumer) {
         //return MultipartBody.Part.createFormData("file", "temp.replay",
         //        RequestBody.create(MediaType.parse("multipart/form-data"), file));
         return MultipartBody.Part.createFormData("file", "temp.replay",
-                new ProgressRequestBody(file, "multipart/form-data"));
+                new ProgressRequestBody(file, "multipart/form-data", percentageConsumer));
     }
 
-    public static ReplayData processReplay(File replay) throws Exception {
+    public static ReplayData processReplay(File replay, Consumer<Integer> percentageConsumer) throws Exception {
         OkHttpClient client =
                 new OkHttpClient.Builder()
                         .callTimeout(100, TimeUnit.MINUTES)
@@ -80,7 +81,7 @@ public class TRNReplay {
                     }
                 });*/
         Response<DataResponse<JobData>> responseResponse =
-                replayService.createJob(fromFile(replay)).execute();
+                replayService.createJob(fromFile(replay, percentageConsumer)).execute();
         String jobId =
                 responseResponse.body().data.jobId;
         System.out.println("Uploaded in " + ((System.currentTimeMillis() - timeStart) / 1000) +
@@ -112,7 +113,9 @@ public class TRNReplay {
     }
 
     public static void main(String... args) throws Exception {
-        processReplay(new File("game 2.replay"));
+        processReplay(new File("game 2.replay"), integer -> {
+
+        });
     }
 
 }
